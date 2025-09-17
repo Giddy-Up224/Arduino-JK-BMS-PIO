@@ -44,6 +44,15 @@ unsigned long lastHeapUpdate = 0;
 unsigned long lastMillis = 0;
 uint32_t totalSeconds = 0;
 
+// Global pre-declarations
+void handleFileList();
+void sendResponce();
+void handleFileUpload();
+void handleFileDelete();
+void handleFileView();
+void handleFormat();
+String getLastModified(File file);
+
 void calculateUptime() {
   unsigned long currentMillis = millis();
   unsigned long elapsedMillis = currentMillis - lastMillis;
@@ -79,7 +88,17 @@ void monitorFreeHeap() {
 
 void setupLittleFS() {
   if (!LittleFS.begin()) {
-    DEBUG_PRINTLN("LittleFS Mount Failed");
+    DEBUG_PRINTLN("LittleFS Mount Failed, attempting format...");
+    if (LittleFS.format()) {
+      DEBUG_PRINTLN("LittleFS Format Complete");
+      if (LittleFS.begin()) {
+        DEBUG_PRINTLN("LittleFS Mounted Successfully after format");
+      } else {
+        DEBUG_PRINTLN("LittleFS Mount Failed even after format");
+      }
+    } else {
+      DEBUG_PRINTLN("LittleFS Format Failed");
+    }
     return;
   }
   DEBUG_PRINTLN("LittleFS Mounted Successfully");
