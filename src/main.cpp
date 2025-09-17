@@ -243,7 +243,7 @@ private:
 // Global Variables and Callbacks
 //********************************************
 JKBMS jkBmsDevices[] = {
-  JKBMS("20:22:08:25:26:8b"),  // Only one device configured
+  JKBMS("c8:47:80:23:4f:95"),  // Only one device configured
   // JKBMS("20:aa:08:25:26:8b"),    // Add more devices here
   // JKBMS("MAC_ADDRESS_3")
 };
