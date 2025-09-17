@@ -5,9 +5,6 @@
 #include <LittleFS.h>
 #include <ArduinoJson.h>
 
-// parseDevice und InfoparseData
-// webserver
-
 // Enable or disable debugging output
 #define DEBUG_ENABLED true
 
@@ -26,7 +23,7 @@
 // WiFi credentials
 const char* ssid = "test";
 const char* password = "test";
-WebServer server(80);  // Webserver auf Port 80
+WebServer server(80);  // Webserver on Port 80
 
 uint32_t minFreeHeap = UINT32_MAX;
 unsigned long lastHeapUpdate = 0;
@@ -38,18 +35,18 @@ void calculateUptime() {
   unsigned long currentMillis = millis();
   unsigned long elapsedMillis = currentMillis - lastMillis;
 
-  // Überlauf von millis() behandeln
+  // Handle millis() overflow
   if (currentMillis < lastMillis) {
-    // Ein Überlauf ist aufgetreten
+    // An overflow has occurred
     elapsedMillis = UINT32_MAX - lastMillis + currentMillis;
   }
 
   
  if (elapsedMillis >= 1000) {
-    // Vergangene Sekunden addieren
+    // Add past seconds
     totalSeconds += elapsedMillis / 1000;
 
-    // Aktuellen millis()-Wert speichern
+    // Save current millis() value
     lastMillis = currentMillis;
   }
 }
@@ -75,7 +72,7 @@ void setupLittleFS() {
   DEBUG_PRINTLN("LittleFS Mounted Successfully");
 }
 
-// lesbare Anzeige der Speichergrößen
+// Memory sizing
 void formatBytes(size_t bytes, char* buffer, size_t bufferSize) {
   if (bytes < 1024) {
     snprintf_P(buffer, bufferSize, PSTR("%zu%s"), bytes, PSTR(" Byte"));
@@ -90,7 +87,7 @@ void formatBytes(size_t bytes, char* buffer, size_t bufferSize) {
 
 
 void getCoreVersion(char* version) {
-  // Schreibe die Version in den char-Array
+  // Write the Version to the char-Array
   sprintf(version, "%d.%d.%d", ESP_ARDUINO_VERSION_MAJOR, ESP_ARDUINO_VERSION_MINOR, ESP_ARDUINO_VERSION_PATCH);
 }
 
@@ -484,21 +481,21 @@ void JKBMS::parseDeviceInfo() {
   DEBUG_PRINTLN("Processing device info...");
   new_data = false;
 
-  // Debugging: Ausgabe der empfangenen Bytes
+  // Debugging: Output of received bytes
   DEBUG_PRINTLN("Raw data received:");
   for (int i = 0; i < frame; i++) {
     DEBUG_PRINTF("%02X ", receivedBytes[i]);
-    if ((i + 1) % 16 == 0) DEBUG_PRINTLN();  // Neue Zeile nach 16 Bytes
+    if ((i + 1) % 16 == 0) DEBUG_PRINTLN();  // New line after 16 bytes
   }
   DEBUG_PRINTLN();
 
-  // Überprüfen, ob genügend Daten empfangen wurden
-  if (frame < 134) {  // 134 Bytes sind für die Geräteinformationen erforderlich
+  // Check if enough data has been received
+  if (frame < 134) {  // 134 bytes are required for device information
     DEBUG_PRINTLN("Error: Not enough data received for device info.");
     return;
   }
 
-  // Extrahieren der Geräteinformationen aus den empfangenen Bytes
+  // Extracting device information from the received bytes
   std::string vendorID(receivedBytes + 6, receivedBytes + 6 + 16);
   std::string hardwareVersion(receivedBytes + 22, receivedBytes + 22 + 8);
   std::string softwareVersion(receivedBytes + 30, receivedBytes + 30 + 8);
@@ -512,7 +509,7 @@ void JKBMS::parseDeviceInfo() {
   std::string userData(receivedBytes + 102, receivedBytes + 102 + 16);
   std::string setupPasscode(receivedBytes + 118, receivedBytes + 118 + 16);
 
-  // Ausgabe der Geräteinformationen
+  // Output of device information
   DEBUG_PRINTF("  Vendor ID: %s\n", vendorID.c_str());
   DEBUG_PRINTF("  Hardware version: %s\n", hardwareVersion.c_str());
   DEBUG_PRINTF("  Software version: %s\n", softwareVersion.c_str());
@@ -655,14 +652,14 @@ void handleRoot() {
 }
 
 void handleJSON() {
-  const size_t capacity = JSON_OBJECT_SIZE(50) + JSON_ARRAY_SIZE(16) + 2000;  // Ausreichend großer Buffer
+  const size_t capacity = JSON_OBJECT_SIZE(50) + JSON_ARRAY_SIZE(16) + 2000;  // create a sufficiently sized buffer
   DynamicJsonDocument doc(capacity);
 
   for (int i = 0; i < bmsDeviceCount; i++) {
     JKBMS& bms = jkBmsDevices[i];
     JsonObject device = doc.createNestedObject(bms.targetMAC);
 
-    // Allgemeine Informationen
+    // General information
     device["battery_voltage"] = bms.Battery_Voltage;
     device["battery_power"] = bms.Battery_Power;
     device["charge_current"] = bms.Charge_Current;
@@ -673,12 +670,12 @@ void handleJSON() {
     device["cycle_capacity"] = bms.Cycle_Capacity;
     device["uptime"] = String(bms.days) + "d " + String(bms.hr) + "h " + String(bms.mi) + "m";
 
-    // Temperaturen
+    // Temperature
     device["battery_t1"] = bms.Battery_T1;
     device["battery_t2"] = bms.Battery_T2;
     device["mos_temp"] = bms.MOS_Temp;
 
-    // Zellspannungen
+    // Cell voltages
     JsonArray cell_voltages = device.createNestedArray("cell_voltages");
     for (int j = 0; j < bms.cell_count; j++) {
       cell_voltages.add(bms.cellVoltage[j]);
@@ -686,7 +683,7 @@ void handleJSON() {
     device["average_cell_voltage"] = bms.Average_Cell_Voltage;
     device["delta_cell_voltage"] = bms.Delta_Cell_Voltage;
 
-    // Widerstände
+    // Resistances
     JsonArray wire_resist = device.createNestedArray("wire_resist");
     for (int j = 0; j < bms.cell_count; j++) {
       wire_resist.add(bms.wireResist[j]);
@@ -699,7 +696,7 @@ void handleJSON() {
     device["balancing_action"] = bms.Balancing_Action;
     device["balance_curr"] = bms.Balance_Curr;
 
-    // BMS Einstellungen
+    // BMS settings
     device["cell_count"] = bms.cell_count;
     device["total_battery_capacity"] = bms.total_battery_capacity;
     device["balance_trigger_voltage"] = bms.balance_trigger_voltage;
@@ -735,7 +732,7 @@ void handleJSON() {
 
 void handleControl() {
   if (server.method() == HTTP_POST) {
-    // JSON-Daten aus dem Request lesen
+    // Read JSON data from the request
     DynamicJsonDocument doc(200);
     DeserializationError error = deserializeJson(doc, server.arg("plain"));
     if (error) {
@@ -743,12 +740,12 @@ void handleControl() {
       return;
     }
 
-    // Daten aus dem JSON-Objekt extrahieren
+    // Extract data from the JSON object
     String mac = doc["mac"];
     String action = doc["action"];
     String state = doc["state"];
 
-    // Parameter für writeRegister() bestimmen
+    // Determine parameters for writeRegister()
     uint8_t address;
     uint32_t value;
 
@@ -772,7 +769,7 @@ void handleControl() {
       return;
     }
 
-    // writeRegister() für das entsprechende BMS aufrufen
+    // Call writeRegister() for the corresponding BMS
     for (int i = 0; i < bmsDeviceCount; i++) {
       if (jkBmsDevices[i].targetMAC == mac.c_str()) {
         jkBmsDevices[i].writeRegister(address, value, 0x04);
@@ -796,7 +793,7 @@ void handleFreeHeap() {
   char formattedHeap[20];
   formatBytes(minFreeHeap, formattedHeap, sizeof(formattedHeap));
 
-  // JSON-Objekt erstellen
+  // Create JSON object
   DynamicJsonDocument doc(100);
   doc["free_heap"] = formattedHeap;
 
