@@ -1,7 +1,6 @@
-# Arduino script with NimBLE to monitor JK-BMS 
+# ESP32 project using NimBLE and WebServer to monitor JK-BMS 
 
-This project is a modified version of [syssi/esphome-jk-bms](https://github.com/syssi/esphome-jk-bms/), rewritten for Arduino using NimBLE.
-Usefull for v11 BMS
+This project is a modified version of [peff74/Arduino-jk-bms](https://github.com/peff74/Arduino-jk-bms), rewritten for ESP32 using PlatformIO.
 
 ## Features
 *   **Real-time Monitoring**:
@@ -15,8 +14,6 @@ Usefull for v11 BMS
 *   **Control**:
     
     *   Turn **Charging**, **Discharging**, and **Balancing** ON/OFF for each BMS.
- 
-    *   I plan to add more.
         
 *   **System Information**:
     
@@ -32,7 +29,7 @@ Usefull for v11 BMS
         
 *   **Web Interface**:
     
-    *   Simple but not pretty web interface with all data and some switches.
+    *   Simple web interface with all data and some switches.
  
     *   A small file manager is included to handle web server files
         
@@ -42,19 +39,13 @@ Usefull for v11 BMS
 Installation
 ------------
 
-*   **Get startet**:
-
-    *   copy index.html + style.css + jk-bms.ino local
+*   **Get started**:
+    *   Clone this repo
     
-*   **Open the Project in Arduino IDE**:
+*   **Open the Project in VS Code with the PlaformIO IDE extension**:
     
-    *   Open the jk-bms.ino file in the Arduino IDE.
-        
-*   **Install Required Libraries**:
-    
-    *   Install the libraries NimBLEDevice + ArduinoJson
- 
-    *   All others are included in the IDE by default
+    *   Open the cloned repo in VS Code
+    *   Libraries and dependencies are automatically installed if you have an internet connection.
  
 *   **Edit settings**:
 
@@ -64,9 +55,7 @@ Installation
     
     *   Connect your ESP32 to your computer.
         
-    *   Select the correct board and port in the Arduino IDE.
-        
-    *   Upload the sketch to the ESP32.
+    *   Build and upload the sketch to the ESP32.
         
 *   **Access the Web Interface**:
     
@@ -288,13 +277,10 @@ Handling notification...
 
 
  *   Web interface
-
-![Exampel](https://github.com/peff74/Arduino-jk-bms/blob/main/jkbms_website.png)
+<!--- Add picture later --->
 
 ## Disclaimer
 This is an experimental project. Use it at your own risk.
 
 ## Credits
-Based on the work of [syssi](https://github.com/syssi).
-
-![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fpeff74%2FArduino-jk-bms&label=Hits&icon=github&color=%23198754&message=&style=flat&tz=UTC)
+Revised edition of [peff74/Arduino-jk-bms](https://github.com/peff74/Arduino-jk-bms)
