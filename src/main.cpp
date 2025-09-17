@@ -9,6 +9,8 @@
 #include <LittleFS.h>
 #include <ArduinoJson.h>
 
+#include "creds.h"
+
 // Enable or disable debugging output
 #define DEBUG_ENABLED true
 
@@ -25,8 +27,15 @@
 
 
 // WiFi credentials
-const char* ssid = "test";
-const char* password = "test";
+// Create a new creds.h file with the following contents and then replace 
+// your_ssid and your_password with your wifi credentials.
+//
+//#pragma once
+//
+//#define wifi_ssid "your_ssid"
+//#define wifi_passwd "your_password"
+const char* ssid = wifi_ssid;
+const char* password = wifi_passwd;
 WebServer server(80);  // Webserver on Port 80
 
 uint32_t minFreeHeap = UINT32_MAX;
